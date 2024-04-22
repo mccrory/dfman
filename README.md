@@ -1,21 +1,27 @@
-**dfman - DataFrameManager**
+# dfman - DataFrameManager
 
-dfman if a simple caching solution when running and re-running computationally intensive pandas dataframes (or others with slight modifications - such as polars). The dataframe is built and kept in both pandas and duckdb, then when re-run, it can be pulled directly from duckdb (the default is to store/cache everything in memory, this can be changed to persist to disk if desired).
+dfman if a simple caching solution when running and re-running computationally intensive pandas dataframes (or others with slight modifications - such as polars).
+The dataframe is built and kept in both pandas and duckdb, then when re-run, it can be pulled directly from duckdb (the default is to store/cache everything on disk, this can be changed to memory if desired).
 
 
-
-***Example:***
+## Example usage
 
 from dfman import dfman
 
 def generate_data():
-    # Your data generation function here
+    # Simulate data generation process
     return pd.DataFrame({'A': range(50), 'B': range(50, 100)})
 
-manager = dfman()
-df = manager.get_or_create_dataframe(generate_data, 'example_table', force_create=False)
-print(df.head())
 
+### Using an in-memory database
+manager_memory = dfman(in_memory=True)
+df_from_func_memory = manager_memory.get_or_create_dataframe(generate_data, 'example_table_memory', force_create=True)
+print(df_from_func_memory.head())
+
+### Using a file-based database
+manager_file = dfman()
+df_from_func_file = manager_file.get_or_create_dataframe(generate_data, 'example_table_file', force_create=True)
+print(df_from_func_file.head())
 
 
 **How it works:**
